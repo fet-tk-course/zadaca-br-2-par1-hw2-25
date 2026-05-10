@@ -47,3 +47,17 @@ def update_instrument(id: int, instrument_update: InstrumentCreate, session: Ses
     session.refresh(instrument)
     return instrument
 
+#PATCH /instruments/{id} - djelimično ažuriranje instrumenta
+#Pronadi instrument po id-u, ako ne postoji vrati 404, ako postoji ažuriraj samo one atribute koji su poslani u zahtjevu
+@router.patch("/{id}", response_model=Instrument)
+def partial_update_instrument(id: int, instrument_update: InstrumentUpdate, session: Session = Depends(get_session)):
+    instrument = session.get(Instrument, id)
+    if not instrument:
+        raise HTTPException(status_code=404, detail="Instrument nije pronađen")
+    update_data = instrument_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(instrument, key, value)
+    session.add(instrument)
+    session.commit()
+    session.refresh(instrument)
+    return instrument
