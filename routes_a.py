@@ -23,4 +23,12 @@ def get_instrument(id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Instrument nije pronađen")
     return instrument
 
+#POST /instruments - kreiranje novog instrumenta
+@router.post("/", response_model=Instrument, status_code=201)
+def create_instrument(instrument_create: InstrumentCreate, session: Session = Depends(get_session)):
+    instrument = Instrument.from_orm(instrument_create)
+    session.add(instrument)
+    session.commit()
+    session.refresh(instrument)
+    return instrument
 
