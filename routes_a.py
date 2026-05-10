@@ -14,3 +14,13 @@ def get_instruments(is_available: bool | None = Query(default=None), session: Se
         query = query.where(Instrument.is_available == is_available)
     instruments = session.exec(query).all()
     return instruments
+
+#GET /instruments/"{id} - dohvatanje instrumenta po id-u"
+@router.get("/{id}", response_model=Instrument)
+def get_instrument(id: int, session: Session = Depends(get_session)):
+    instrument = session.get(Instrument, id)
+    if not instrument:
+        raise HTTPException(status_code=404, detail="Instrument nije pronađen")
+    return instrument
+
+
