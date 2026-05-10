@@ -32,3 +32,18 @@ def create_instrument(instrument_create: InstrumentCreate, session: Session = De
     session.refresh(instrument)
     return instrument
 
+#PUT /instruments/{id} - potpuna zamjena instrumenta
+#Pronadi instrument po id-u, ako ne postoji vrati 404, ako postoji zamjeni sve atribute sa novim vrijednostima
+@router.put("/{id}", response_model=Instrument)
+def update_instrument(id: int, instrument_update: InstrumentCreate, session: Session = Depends(get_session)):
+    instrument = session.get(Instrument, id)
+    if not instrument:
+        raise HTTPException(status_code=404, detail="Instrument nije pronađen")
+    instrument_data = instrument_update.dict()
+    for key, value in instrument_data.items():
+        setattr(instrument, key, value)
+    session.add(instrument)
+    session.commit()
+    session.refresh(instrument)
+    return instrument
+
