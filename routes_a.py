@@ -60,4 +60,13 @@ def partial_update_instrument(id: int, instrument_update: InstrumentUpdate, sess
     session.add(instrument)
     session.commit()
     session.refresh(instrument)
-    return instrument
+    return instrument 
+
+#DELETE /instruments/{id} - brisanje instrumenta
+@router.delete("/{id}", status_code=204)  
+def delete_instrument(id: int, session: Session = Depends(get_session)):
+    instrument = session.get(Instrument, id)
+    if not instrument:
+        raise HTTPException(status_code=404, detail="Instrument nije pronađen")
+    session.delete(instrument)
+    session.commit()
