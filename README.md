@@ -3,11 +3,13 @@
 
 ## O projektu
 
-[Ovdje ukratko opišite domenu vaše aplikacije i njenu svrhu]
+Ova aplikacija omogućava praćenje laboratorijske opreme u telekomunikacijskoj laboratoriji. 
+Sistem pruža evidenciju instrumenata (naziv, inventurni broj, proizvođač, cijena i sl.) 
+te vrsta mjerenja koja se izvode u laboratoriji.
 
 ## Tim
 
-- **Student A**: [Ime Prezime] - resurs: `/resursi_a`
+- **Student A**: Maida Kamenčić - resurs: `instruments`
 - **Student B**: [Ime Prezime] - resurs: `/resursi_b`
 
 ## Instalacija i pokretanje
@@ -52,19 +54,24 @@ uvicorn main:app --reload
 
 | Metoda | Ruta | Opis |
 |--------|------|------|
-| GET | `/resursi_a` | Lista svih resursa (sa query filterom) |
-| GET | `/resursi_a/{id}` | Dohvatanje resursa po ID-u |
-| POST | `/resursi_a` | Kreiranje novog resursa |
-| PUT | `/resursi_a/{id}` | Potpuna zamjena resursa |
-| PATCH | `/resursi_a/{id}` | Djelimično ažuriranje resursa |
-| DELETE | `/resursi_a/{id}` | Brisanje resursa |
+| GET | `/instruments` | Lista svih resursa (filter po dostupnosti uređaja) |
+| GET | `/instruments/{id}` | Dohvatanje resursa po ID-u |
+| POST | `/instruments` | Kreiranje novog resursa |
+| PUT | `/instruments/{id}` | Potpuna zamjena resursa |
+| PATCH | `/instruments/{id}` | Djelimično ažuriranje resursa |
+| DELETE | `/instruments/{id}` | Brisanje resursa |
 
 **Primjer zahtjeva:**
 ```bash
 # Kreiranje novog resursa
-curl -X POST "http://localhost:8000/resursi_a" \
+curl -X POST "http://localhost:8000/instruments" \
   -H "Content-Type: application/json" \
-  -d '{"polje1": "vrijednost", "polje2": 123}'
+  -d '{"name": "Osciloskop",
+      "inventory_number": "OS-123", 
+       "manufacturer": "Rigol Tehnologies",
+       "price": 1500.00,
+       "is_available": true
+       "location": "Stelekt Lab"}'
 ```
 
 ### Resurs B: `/resursi_b`
@@ -74,12 +81,12 @@ curl -X POST "http://localhost:8000/resursi_a" \
 ## Korištenje AI alata
 
 ### Alat: [GitHub Copilot / ChatGPT / ...]
-**Model:** [GPT-4, Copilot model, ...]
+**Model:** Copilot model
 
 **Primjer 1:**
-- **Prompt:** [Npr. "Kreiraj SQLModel klasu za entitet Knjiga sa poljima naslov, autor, godina, isbn"]
-- **Kako je pomoglo:** [Opis]
-- **Prilagodbe:** [Da li ste morali prilagoditi generisani kod]
+- **Prompt:** Kako da napišem query upit za varijablu dostupnosti uređaja?
+- **Kako je pomoglo:** AI je predložio kako da koristim `Query` iz FastAPI-ja za filtriranje rezultata na osnovu dostupnosti uređaja.
+- **Prilagodbe:** Prilagodila sam kod polju `is_available` u Instrument modelu.
 
 **Primjer 2:**
 - **Prompt:** [Npr. "Implementiraj PATCH endpoint sa exclude_unset=True"]
