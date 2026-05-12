@@ -45,3 +45,25 @@ def update_measurement(id: int, measurement_update: MeasurementCreate, session: 
     return db_measurement
 
 
+@router.patch("/{id}", response_model=Measurement)
+def partial_update_measurement(id: int, measurement_patch: MeasurementUpdate, session: Session = Depends(get_session)):
+    db_measurement = session.get(Measurement, id)
+    if not db_measurement:
+        raise HTTPException(status_code=404, detail="Mjerenje nije pronađeno")
+    update_data = measurement_patch.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_measurement, key, value)
+    session.add(db_measurement)
+    session.commit()
+    session.refresh(db_measurement)
+    return db_measurement
+
+
+@router.delete("/{id}", status_code=204)
+def delete_measurement(id: int, session: Session = Depends(get_session)):
+    db_measurement = session.get(Measurement, id)
+    if not db_measurement:
+        raise HTTPException(status_code=404, detail="Mjerenje nije pronađeno")
+    session.delete(db_measurement)
+    session.commit()
+    return None
