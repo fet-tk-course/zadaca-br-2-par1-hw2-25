@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 from database import get_session
 from models_b import Measurement, MeasurementCreate, MeasurementUpdate
 
-router = APIRouter(prefix="/measurements", tags=["Mensurations"])
+router = APIRouter(prefix="/measurements", tags=["Measurements"])
 
 @router.get("/", response_model=list[Measurement])
 def get_measurements(session: Session = Depends(get_session)):
