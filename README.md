@@ -1,19 +1,22 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/wxDq4rbD)
 # Zadaća 2 - REST API aplikacija
 
 ## O projektu
 
-[Ovdje ukratko opišite domenu vaše aplikacije i njenu svrhu]
+Ova aplikacija omogućava praćenje laboratorijske opreme u telekomunikacijskoj laboratoriji. 
+Sistem pruža evidenciju instrumenata (naziv, inventurni broj, proizvođač, cijena i sl.) 
+te vrsta mjerenja koja se izvode u laboratoriji.
 
 ## Tim
 
-- **Student A**: [Ime Prezime] - resurs: `/resursi_a`
-- **Student B**: [Ime Prezime] - resurs: `/resursi_b`
+- **Student A**: Maida Kamenčić - resurs: `instruments`
+- **Student B**: Amer Imamovic - resurs: `measurements`
 
 ## Instalacija i pokretanje
 
 ### Preduvjeti
 
-- Python 3.10 ili noviji
+- Python 3.11.9
 - pip
 
 ### Koraci
@@ -51,40 +54,68 @@ uvicorn main:app --reload
 
 | Metoda | Ruta | Opis |
 |--------|------|------|
-| GET | `/resursi_a` | Lista svih resursa (sa query filterom) |
-| GET | `/resursi_a/{id}` | Dohvatanje resursa po ID-u |
-| POST | `/resursi_a` | Kreiranje novog resursa |
-| PUT | `/resursi_a/{id}` | Potpuna zamjena resursa |
-| PATCH | `/resursi_a/{id}` | Djelimično ažuriranje resursa |
-| DELETE | `/resursi_a/{id}` | Brisanje resursa |
+| GET | `/instruments` | Lista svih resursa (filter po dostupnosti uređaja) |
+| GET | `/instruments/{id}` | Dohvatanje resursa po ID-u |
+| POST | `/instruments` | Kreiranje novog resursa |
+| PUT | `/instruments/{id}` | Potpuna zamjena resursa |
+| PATCH | `/instruments/{id}` | Djelimično ažuriranje resursa |
+| DELETE | `/instruments/{id}` | Brisanje resursa |
 
 **Primjer zahtjeva:**
 ```bash
 # Kreiranje novog resursa
-curl -X POST "http://localhost:8000/resursi_a" \
+curl -X POST "http://localhost:8000/instruments" \
   -H "Content-Type: application/json" \
-  -d '{"polje1": "vrijednost", "polje2": 123}'
+  -d '{"name": "Osciloskop",
+      "inventory_number": "OS-123", 
+       "manufacturer": "Rigol Tehnologies",
+       "price": 1500.00,
+       "is_available": true
+       "location": "Stelekt Lab"}'
 ```
 
 ### Resurs B: `/resursi_b`
 
-[Analogno kao za Resurs A]
+GET	/measurements	Lista svih mjerenja iz baze podataka
+GET	/measurements/{id}	Dohvatanje jednog specifičnog mjerenja po ID-u
+POST	/measurements	Kreiranje novog zapisa o mjerenju
+PUT	/measurements/{id}	Potpuna zamjena podataka postojećeg mjerenja
+PATCH	/measurements/{id}	Djelimična izmjena (npr. samo vrijednosti) mjerenja
+DELETE	/measurements/{id}	Trajno brisanje mjerenja iz baze
+
+**Primjer zahtjeva:**
+```bash
+# Kreiranje novog mjerenja
+curl -X POST "http://localhost:8000/measurements" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "measurement_type": "Temperatura",
+        "value": 24.5,
+        "unit": "°C",
+        "is_automated": true,
+        "notes": "Mjerenje izvršeno u glavnom laboratoriju"
+      }'
+```
 
 ## Korištenje AI alata
 
 ### Alat: [GitHub Copilot / ChatGPT / ...]
-**Model:** [GPT-4, Copilot model, ...]
+**Model:** Copilot model
 
 **Primjer 1:**
-- **Prompt:** [Npr. "Kreiraj SQLModel klasu za entitet Knjiga sa poljima naslov, autor, godina, isbn"]
-- **Kako je pomoglo:** [Opis]
-- **Prilagodbe:** [Da li ste morali prilagoditi generisani kod]
+- **Prompt:** Kako da napišem query upit za varijablu dostupnosti uređaja?
+- **Kako je pomoglo:** AI je predložio kako da koristim `Query` iz FastAPI-ja za filtriranje rezultata na osnovu dostupnosti uređaja.
+- **Prilagodbe:** Prilagodila sam kod polju `is_available` u Instrument modelu.
 
 **Primjer 2:**
-- **Prompt:** [Npr. "Implementiraj PATCH endpoint sa exclude_unset=True"]
-- **Kako je pomoglo:** [Opis]
-- **Prilagodbe:** [Opis]
+- **Prompt:** Kako da popravim upozorenje "from_orm is deprecated" koje mi se stalno pojavljuje u VS Code-u?
+- **Kako je pomoglo:** AI je objasnio da se u novoj verziji biblioteke koristi model_validate umjesto starije metode
+- **Prilagodbe:** Primijenio sam ove izmjene u svim funkcijama
 
+**Primjer 3:**
+- **Prompt:** Zašto mi funkcija vraća null za ID tek kreiranog mjerenja iako je ono spašeno u bazu?
+- **Kako je pomoglo:** AI mi je objasnio koncept sinhronizacije između Pythona i SQL-a i važnost funkcije session.refresh
+- **Prilagodbe:** Dodala sam session.refresh(db_measurement) nakon svakog commit() poziva.
 ## Napomene
 
 [Dodatne napomene specifične za vašu implementaciju]
