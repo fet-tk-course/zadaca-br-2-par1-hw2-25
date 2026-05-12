@@ -10,13 +10,13 @@ te vrsta mjerenja koja se izvode u laboratoriji.
 ## Tim
 
 - **Student A**: Maida Kamenčić - resurs: `instruments`
-- **Student B**: [Ime Prezime] - resurs: `/resursi_b`
+- **Student B**: Amer Imamovic - resurs: `measurements`
 
 ## Instalacija i pokretanje
 
 ### Preduvjeti
 
-- Python 3.10 ili noviji
+- Python 3.11.9
 - pip
 
 ### Koraci
@@ -76,7 +76,26 @@ curl -X POST "http://localhost:8000/instruments" \
 
 ### Resurs B: `/resursi_b`
 
-[Analogno kao za Resurs A]
+GET	/measurements	Lista svih mjerenja iz baze podataka
+GET	/measurements/{id}	Dohvatanje jednog specifičnog mjerenja po ID-u
+POST	/measurements	Kreiranje novog zapisa o mjerenju
+PUT	/measurements/{id}	Potpuna zamjena podataka postojećeg mjerenja
+PATCH	/measurements/{id}	Djelimična izmjena (npr. samo vrijednosti) mjerenja
+DELETE	/measurements/{id}	Trajno brisanje mjerenja iz baze
+
+**Primjer zahtjeva:**
+```bash
+# Kreiranje novog mjerenja
+curl -X POST "http://localhost:8000/measurements" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "measurement_type": "Temperatura",
+        "value": 24.5,
+        "unit": "°C",
+        "is_automated": true,
+        "notes": "Mjerenje izvršeno u glavnom laboratoriju"
+      }'
+```
 
 ## Korištenje AI alata
 
@@ -89,10 +108,14 @@ curl -X POST "http://localhost:8000/instruments" \
 - **Prilagodbe:** Prilagodila sam kod polju `is_available` u Instrument modelu.
 
 **Primjer 2:**
-- **Prompt:** [Npr. "Implementiraj PATCH endpoint sa exclude_unset=True"]
-- **Kako je pomoglo:** [Opis]
-- **Prilagodbe:** [Opis]
+- **Prompt:** Kako da popravim upozorenje "from_orm is deprecated" koje mi se stalno pojavljuje u VS Code-u?
+- **Kako je pomoglo:** AI je objasnio da se u novoj verziji biblioteke koristi model_validate umjesto starije metode
+- **Prilagodbe:** Primijenio sam ove izmjene u svim funkcijama
 
+**Primjer 3:**
+- **Prompt:** Zašto mi funkcija vraća null za ID tek kreiranog mjerenja iako je ono spašeno u bazu?
+- **Kako je pomoglo:** AI mi je objasnio koncept sinhronizacije između Pythona i SQL-a i važnost funkcije session.refresh
+- **Prilagodbe:** Dodala sam session.refresh(db_measurement) nakon svakog commit() poziva.
 ## Napomene
 
 [Dodatne napomene specifične za vašu implementaciju]
