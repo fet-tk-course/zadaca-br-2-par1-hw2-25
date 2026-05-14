@@ -118,4 +118,26 @@ curl -X POST "http://localhost:8000/measurements" \
 - **Prilagodbe:** Dodala sam session.refresh(db_measurement) nakon svakog commit() poziva.
 ## Napomene
 
-[Dodatne napomene specifične za vašu implementaciju]
+Zadatak 1a:
+U InstrumentCreate modelu dodala sam validator za  provjeru ispravnog unosa godine (godina ne smije biti negativna) i provjera unosa cijene (cijena mora biti pozitivna)
+
+Zadayak 1b:
+U endpointu POST /instruments dodala sam provjeru da li već postoji instrument sa istim inventarnim brojem. Ukoliko postoji, vraća se HTTP status 409 Conflict, tj vraća se poruka "Instrument sa istim inventarnim brojem već postoji".
+
+
+Zadatak 2
+Dodala sam endpoint GET /instruments/count koji vraća broj dostupnih instrumenata u laboratoriji. 
+
+Opis promjena u modelu iz Z1:
+Dodala sam validator za polje purchase_year koji provjerava da li je unesena godina ispravna (ne smije biti negativna) i validator za polje price koji provjerava da li je unesena cijena pozitivna.
+
+Opis validacijskih pravila:
+Opisi koji su dodani tokom provjere zadace su sljedeći:
+- Polje purchase_year ne smije biti negativno. Ako korisnik unese negativnu vrijednost, API će vratiti HTTP status 422 "Godina kupovine ne smije biti negativna".
+- Polje price mora biti pozitivno. Ako korisnik unese nulu ili negativnu vrijednost, API će vratiti HTTP status 422 "Cijena mora biti pozitivna".
+-Polje inventory_number mora biti jedinstveno. Ako korisnik pokuša kreirati instrument sa inventarnim brojem koji već postoji, API će vratiti HTTP status 409 "Instrument sa istim inventarnim brojem već postoji".
+
+Opisi koji su se nalazili na zadaci su bili sljedeći:
+-Ukoliko korisnik unese id koji ne postoji, API će vratiti HTTP status 404 "Instrument nije pronađen".
+
+

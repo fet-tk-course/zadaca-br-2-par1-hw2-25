@@ -15,6 +15,13 @@ def get_instruments(is_available: bool | None = Query(default=None), session: Se
     instruments = session.exec(query).all()
     return instruments
 
+#GET /instruments/count - dohvati broj dostupnih instrumenata
+@router.get("/count")
+def count_instruments(session: Session = Depends(get_session)):
+    count = session.exec(select(Instrument)).all()
+    count_available = [i for i in count if i.is_available]
+    return {"dostupno": len(count_available)}
+
 #GET /instruments/"{id} - dohvatanje instrumenta po id-u"
 @router.get("/{id}", response_model=Instrument)
 def get_instrument(id: int, session: Session = Depends(get_session)):
@@ -26,6 +33,9 @@ def get_instrument(id: int, session: Session = Depends(get_session)):
 #POST /instruments - kreiranje novog instrumenta
 @router.post("/", response_model=Instrument, status_code=201)
 def create_instrument(instrument_create: InstrumentCreate, session: Session = Depends(get_session)):
+    existing_instrument = session.exec(select(Instrument).where(Instrument.inventory_number == instrument_create.inventory_number)).first()
+    if existing_instrument:
+        raise HTTPException(status_code=409, detail="Instrument sa istim inventarnim brojem već postoji")
     instrument = Instrument.from_orm(instrument_create)
     session.add(instrument)
     session.commit()

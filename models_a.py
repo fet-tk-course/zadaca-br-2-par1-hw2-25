@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, Field
 from typing import Optional
-
+from pydantic import field_validator
 # TODO: Student A - Definiši svoj SQLModel entitet ovdje
 # 
 
@@ -24,7 +24,21 @@ class InstrumentCreate(SQLModel):
     price: float
     is_available: bool
     location: Optional[str] = None
-
+#Dodani validatori za provjeru ispravnog unosa godine (godina ne smije biti negativna) i provjera unosa cijene (cijena mora biti pozitivna)
+    @field_validator("purchase_year")
+    @classmethod
+    def validate_purchase_year(cls, v):
+        if v < 0:
+            raise ValueError("Godina kupovine ne može biti negativna.")
+        return v
+    
+    @field_validator('price')
+    @classmethod
+    def price_mora_biti_pozitivna(cls, v):
+        if v <= 0:
+            raise ValueError('Cijena mora biti veća od nule')
+        return v
+    
 #Shema za djelimicno azuriranje instrumenta
 class InstrumentUpdate(SQLModel):
     name: Optional[str] = None
