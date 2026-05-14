@@ -119,3 +119,10 @@ curl -X POST "http://localhost:8000/measurements" \
 ## Napomene
 
 [Dodatne napomene specifične za vašu implementaciju]
+
+
+
+##Provjera 
+U zadatku 1 dodano je tip mjerenja ne smije biti prazan string i da provjerim da ne bi stavljao isti tip mjerenja, u zadatku 2 sam dodao da mogu izbrojati ukupan broj mjerenja koji se nalazi trenutno u bazi 
+
+GET/measurments/count- vraca nam ukupan broj mjrenja i vrati nam odgovor 200, a POST/measurments ima sada provjeru da ne bi bio dupli tip mjerenja odgovor je 201, promjenom modela u zadatku 1 smo omogucili da tip mjerenja ne smije biti prazan string. U slucaju kada u post napisemo isto ime imati cemo error kod 409, a ako probamo poslati prazan string kao tip mjerenja imati cemo 422

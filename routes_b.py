@@ -12,6 +12,13 @@ def get_measurements(session: Session = Depends(get_session)):
     measurements = session.exec(query).all()
     return measurements
 
+@router.get("/count")
+def count_measurements(session: Session = Depends(get_session)):
+    measurements = session.exec(select(Measurement)).all()
+    ukupno = len(measurements)
+    
+    return {"ukupno": ukupno}
+
 
 @router.get("/{id}", response_model=Measurement)
 def get_measurement(id: int, session: Session = Depends(get_session)):
@@ -24,6 +31,15 @@ def get_measurement(id: int, session: Session = Depends(get_session)):
 
 @router.post("/", response_model=Measurement, status_code=201)
 def create_measurement(measurement_create: MeasurementCreate, session: Session = Depends(get_session)):
+    statement = select(Measurement).where(Measurement.measurement_type == measurement_create.measurement_type)
+    existing = session.exec(statement).first()
+
+    if existing:
+        raise HTTPException(
+            status_code=409, 
+            detail="Resurs s ovim imenom već postoji."
+        )
+    
     db_measurement = Measurement.model_validate(measurement_create)   
     session.add(db_measurement)
     session.commit()
@@ -67,3 +83,9 @@ def delete_measurement(id: int, session: Session = Depends(get_session)):
     session.delete(db_measurement)
     session.commit()
     return None
+
+
+
+
+
+

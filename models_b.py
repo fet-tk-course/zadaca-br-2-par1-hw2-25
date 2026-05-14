@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, Field
 from typing import Optional
-
+from pydantic import field_validator
 class Measurement(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     measurement_type: str = Field(index=True)
@@ -17,7 +17,13 @@ class MeasurementCreate(SQLModel):
     is_automated: bool = False
     required_accuracy: float
     description: Optional[str] = None
- 
+    @field_validator('measurement_type')
+    @classmethod
+    def type_must_not_be_empty(cls, v: str):
+        if not v.strip():
+            raise ValueError('Tip mjerenja ne smije biti prazan string')
+        return v.strip()
+
 
 class MeasurementUpdate(SQLModel):
     measurement_type: Optional[str] = None
